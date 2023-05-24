@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 
 public class ImageUtils {
@@ -21,17 +22,30 @@ public class ImageUtils {
     public static Image getImageFromClipboard() {
         Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 
+
         try {
-            if(transferable == null || transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            if (transferable == null) {
                 return null;
+            }
+
+            if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                if (files.size() > 0) {
+                    return ImageIO.read(files.get(0));
+                }
             }
 
             if (transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
                 return (Image) transferable.getTransferData(DataFlavor.imageFlavor);
-            } else {
+            }
+
+            if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                String string = (String)transferable.getTransferData(DataFlavor.stringFlavor);
+                // @TODO: Check the string is a URL?
                 return null;
             }
 
+            return null;
         } catch (UnsupportedFlavorException e) {
             e.printStackTrace();
         } catch (IOException e) {
