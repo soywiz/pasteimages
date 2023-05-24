@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ImageUtils {
 
-    public static Image getImageFromClipboard() {
+    public static ImageWithInfo getImageFromClipboard() {
         Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 
 
@@ -31,12 +31,13 @@ public class ImageUtils {
             if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                 if (files.size() > 0) {
-                    return ImageIO.read(files.get(0));
+                    File file = files.get(0);
+                    return new ImageWithInfo(ImageIO.read(file), file.getName().split("\\.")[0]);
                 }
             }
 
             if (transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-                return (Image) transferable.getTransferData(DataFlavor.imageFlavor);
+                return new ImageWithInfo((Image) transferable.getTransferData(DataFlavor.imageFlavor), null);
             }
 
             if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
