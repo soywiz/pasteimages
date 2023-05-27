@@ -18,11 +18,12 @@ import java.util.List;
 
 
 public class ImageUtils {
-
     public static ImageWithInfo getImageFromClipboard() {
         Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        return getImageFromClipboard(transferable);
+    }
 
-
+    public static ImageWithInfo getImageFromClipboard(final Transferable transferable) {
         try {
             if (transferable == null) {
                 return null;
@@ -50,7 +51,7 @@ public class ImageUtils {
         } catch (UnsupportedFlavorException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
 
         return null;
